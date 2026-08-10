@@ -1,17 +1,18 @@
 const mysql = require("mysql2/promise");
 
+// Configured to use Railway variables in production, with local fallbacks
 const db = mysql.createPool({
-    host: "127.0.0.1",       // Explicit loopback IP ensures fast routing on Windows
-    user: "root",
-    password: "",            // Empty string fixes the XAMPP access denied error
-    database: "afribot",
-    port: 3306               // Standard MySQL service port
+    host: process.env.MYSQLHOST || "127.0.0.1",       
+    user: process.env.MYSQLUSER || "root",
+    password: process.env.MYSQLPASSWORD !== undefined ? process.env.MYSQLPASSWORD : "",            
+    database: process.env.MYSQLDATABASE || "afribot",
+    port: process.env.MYSQLPORT ? parseInt(process.env.MYSQLPORT) : 3306               
 });
 
 // Verify connection and immediately free the resource socket
 db.getConnection()
     .then((connection) => {
-        console.log("connected to MYSQL via promise-pool");
+        console.log("Connected to MySQL database pool successfully.");
         connection.release(); 
     })
     .catch((err) => {

@@ -1,10 +1,12 @@
 require("dotenv").config();
 
 // Live, production-ready stable tier endpoint for Google Gemini
-const MODEL = "gemini-flash-latest"; 
+const MODEL = "gemini-flash-latest";
 
-// FIXED: Added the '$' sign and used the correct full Google API domain path
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?alt=sse&key=${process.env.GEMINI_API_KEY}`;
+// Auth keys (the new "AQ." format from AI Studio) must be sent via the
+// x-goog-api-key header, NOT as a ?key= query param. The query-param method
+// only works with legacy "AIzaSy" Standard keys, which Google is retiring.
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?alt=sse`;
 
 const SYSTEM_PROMPT = `You are "Afribot Assistant", an AI customer service agent for Afribot Robotics. Your tone is energetic, welcoming, helpful, and highly knowledgeable about STEM and automation. Keep answers concise. Always direct users to the official contact lines for bookings or partnerships.
 
@@ -49,7 +51,7 @@ A: Yes. We design and install smart tech including table delivery robots for res
 // Explicitly filter out any "system" items from the chat conversation array
 function toGeminiContents(messages) {
   const pureChatTurns = messages.filter((m) => m.role !== "system" && m.role !== "developer");
-  
+
   return pureChatTurns.map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
     parts: [{ text: m.content }],
@@ -64,7 +66,7 @@ async function streamChatCompletion(messages) {
 
   // Grab any dynamic website context passed down by the controller
   const controllerSystemMsg = messages.find((m) => m.role === "system")?.content || "";
-  
+
   // Combine your base rules with your live scraped website context
   const fullSystemGrounding = `${SYSTEM_PROMPT}\n\nADDITIONAL REAL-TIME WEBSITE CONTEXT:\n${controllerSystemMsg}`;
 
@@ -73,6 +75,7 @@ async function streamChatCompletion(messages) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "x-goog-api-key": process.env.GEMINI_API_KEY, // auth key goes here, not in the URL
       },
       body: JSON.stringify({
         systemInstruction: {
