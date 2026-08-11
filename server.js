@@ -18,7 +18,13 @@ const app = express();
 // Global Middlewares
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174","127.0.0.1","https://vercel.app"],
+  origin: [
+    "http://localhost:5173", 
+    "http://localhost:5174",
+    "http://127.0.0.1:5173", // Added protocol and common frontend ports
+    "http://127.0.0.1:5174",
+    "https://newproject-7acc.vercel.app" // Your specific Vercel deployment URL
+  ],
   credentials: true
 }));
 
