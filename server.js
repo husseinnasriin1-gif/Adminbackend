@@ -24,7 +24,9 @@ app.use(cors({
     "http://127.0.0.1:5173",
     "http://127.0.0.1:5174",
     "https://newproject-7acc.vercel.app",
-    "https://admindashboard-9qfv.vercel.app"   // add this
+    "https://admindashboard-9qfv.vercel.app",  
+      "https://admindashboard-k1nf.vercel.app"
+  // add this
   ],
   credentials: true
 }));
