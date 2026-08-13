@@ -21,12 +21,14 @@ app.use(cors({
   origin: [
     "http://localhost:5173", 
     "http://localhost:5174",
-    "http://127.0.0.1:5173", // Added protocol and common frontend ports
+    "http://127.0.0.1:5173",
     "http://127.0.0.1:5174",
-    "https://newproject-7acc.vercel.app" // Your specific Vercel deployment URL
+    "https://newproject-7acc.vercel.app",
+    "https://admindashboard-9qfv.vercel.app"   // add this
   ],
   credentials: true
 }));
+  
 
 // Modular Route Mounting
 app.use("/", authRoutes);                  
